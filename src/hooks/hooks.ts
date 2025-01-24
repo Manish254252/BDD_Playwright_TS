@@ -9,10 +9,11 @@ let page: Page, browser: Browser, context: BrowserContext;
 BeforeAll(async function () {
 
     browser = await chromium.launch({headless: false});
+    console.log("befor all")
 })
 
 Before(async function () {
-
+    console.log("before")
     context = await browser.newContext();
     page = await context.newPage();
     //@ts-ignore
