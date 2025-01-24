@@ -1,0 +1,19 @@
+{
+  "name": "bdd_playwright_ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "cucumber-js test",
+    "report": "cucumber-js --format cucumber-js-extent:extentReport/spark.html"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^11.2.0",
+    "@playwright/test": "^1.50.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3",
+    "cucumber-js-extent": "^0.1.0"
+  },
+  "private": true
+}
