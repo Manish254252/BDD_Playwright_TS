@@ -98,4 +98,10 @@ export class DashBoard{
     }
 
 
+    async isUsernameVisible():Promise<boolean> {
+
+       return await this.username.isVisible()
+
+
+    }
 }

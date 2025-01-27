@@ -1,4 +1,4 @@
-Feature: Demo Playwight
+Feature: Demo Playwright
 
     Scenario: Playwright dev web
 

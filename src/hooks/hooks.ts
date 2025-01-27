@@ -1,5 +1,5 @@
 import {Browser, Page} from "playwright";
-import {After, AfterAll, Before, BeforeAll, Status} from "@cucumber/cucumber";
+import {After, AfterAll, AfterStep, Before, BeforeAll, Status} from "@cucumber/cucumber";
 import {BrowserContext, chromium} from "@playwright/test";
 import {pageFixture} from "./pageFixtures";
 
@@ -20,16 +20,27 @@ Before(async function () {
     pageFixture.page = page;
 
 });
-
+//
+//
+// AfterStep(async function ({pickle,result}) {
+//     const image = await pageFixture.page.screenshot({path:`./screenshots/${pickle.name}.png`,type:"png"});
+//     this.attach(image, "image/png");
+// });
 
 After(async function ({pickle,result}) {
 
-    //screenshots for test failure
+    // screenshots for test failure
         if(result?.status==Status.FAILED)
         {
             const image = await pageFixture.page.screenshot({path:`./screenshots/${pickle.name}.png`,type:"png"});
             this.attach(image, "image/png");
         }
+
+
+    //screenshots for all tests
+
+
+
 
     await page.close()
     await context.close()
