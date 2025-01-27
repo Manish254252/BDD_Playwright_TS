@@ -8,8 +8,17 @@ let page: Page, browser: Browser, context: BrowserContext;
 
 BeforeAll(async function () {
 
-    browser = await chromium.launch({headless: true});
-    console.log("befor all")
+    // For chromium
+
+    browser = await chromium.launch({headless: false});
+
+    // For Chrome
+
+    // browser = await chromium.launch(
+    //     {headless: false,
+    //     executablePath:'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'}
+    // );
+    console.log("before all")
 })
 
 Before(async function () {
