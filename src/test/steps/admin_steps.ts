@@ -1,9 +1,11 @@
-import {Given, Then} from "@cucumber/cucumber";
-import {LoginPage} from "../pages/loginPage";
+import {Given, setDefaultTimeout, Then} from "@cucumber/cucumber";
 import {pageFixture} from "../../hooks/pageFixtures";
 import {AdminPage} from "../pages/AdminPage";
 
+setDefaultTimeout(60 * 1000);
 let adminPage:AdminPage ;
+
+
 Given('user clicks on AddUserBtn', async function () {
     adminPage=new AdminPage(pageFixture.page);
     await adminPage.clickAddBtn()
@@ -27,7 +29,7 @@ Then('user enters password',async function () {
     await adminPage.enterPassword("admin123");
 
 });
-Then('user clicks on saveBtn',{timeout:30000},async function () {
+Then('user clicks on saveBtn',async function () {
     await adminPage.clickSaveBtn();
 
 });

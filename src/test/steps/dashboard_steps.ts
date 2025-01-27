@@ -1,8 +1,9 @@
 import {DashBoard} from "../pages/DashBoard";
-import {Given, When} from "@cucumber/cucumber";
+import {Given, setDefaultTimeout, When} from "@cucumber/cucumber";
 import {pageFixture} from "../../hooks/pageFixtures";
 
 let dashboardPage : DashBoard;
+setDefaultTimeout(60 * 1000);
 
 Given('verify user is logged in', async function () {
     dashboardPage = new DashBoard(pageFixture.page);

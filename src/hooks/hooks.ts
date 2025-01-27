@@ -8,7 +8,7 @@ let page: Page, browser: Browser, context: BrowserContext;
 
 BeforeAll(async function () {
 
-    browser = await chromium.launch({headless: false});
+    browser = await chromium.launch({headless: true});
     console.log("befor all")
 })
 
