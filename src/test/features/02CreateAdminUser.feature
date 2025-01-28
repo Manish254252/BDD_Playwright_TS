@@ -1,5 +1,5 @@
 Feature: Create Admin User
-
+  @web
   Scenario: Create Admin User
 
     Given user visits the web page

@@ -1,5 +1,5 @@
 Feature: Demo Playwright
-
+    @web
     Scenario: Playwright dev web
 
         Given user visits the web page

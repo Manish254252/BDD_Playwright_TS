@@ -21,7 +21,7 @@ BeforeAll(async function () {
     console.log("before all")
 })
 
-Before(async function () {
+Before({tags:"@web"},async function () {
     console.log("before")
     context = await browser.newContext();
     page = await context.newPage();
@@ -36,7 +36,7 @@ Before(async function () {
 //     this.attach(image, "image/png");
 // });
 
-After(async function ({pickle,result}) {
+After({tags:"@web"},async function ({pickle,result}) {
 
     // screenshots for test failure
 
