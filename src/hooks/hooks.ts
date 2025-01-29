@@ -21,7 +21,7 @@ BeforeAll(async function () {
     console.log("before all")
 })
 
-Before({tags:"@web"},async function () {
+Before({tags: "@web"}, async function () {
     console.log("before")
     context = await browser.newContext();
     page = await context.newPage();
@@ -36,20 +36,17 @@ Before({tags:"@web"},async function () {
 //     this.attach(image, "image/png");
 // });
 
-After({tags:"@web"},async function ({pickle,result}) {
+After({tags: "@web"}, async function ({pickle, result}) {
 
     // screenshots for test failure
 
-        if(result?.status==Status.FAILED)
-        {
-            const image = await pageFixture.page.screenshot({path:`./screenshots/${pickle.name}.png`,type:"png"});
-            this.attach(image, "image/png");
-        }
+    if (result?.status == Status.FAILED) {
+        const image = await pageFixture.page.screenshot({path: `./screenshots/${pickle.name}.png`, type: "png"});
+        this.attach(image, "image/png");
+    }
 
 
     //screenshots for all tests
-
-
 
 
     await page.close()

@@ -78,9 +78,13 @@ export class AdminPage{
 
     async clickSaveBtn() {
     await this.saveBtn.click();
-    await page.waitForTimeout(29000)
+    // await page.waitForTimeout(29000)
     }
     async verifyUserInAdminList(){
+        // wait for element to be visible
+
+        await page.waitForSelector('//div[@role=\'table\']//div[@role=\'row\']/div[2]',{state:"visible"});
+
         let userNames = await this.userNameAdminList.allInnerTexts();
         console.log(this.userName+" userName");
         expect(userNames).toContain(this.userName);
