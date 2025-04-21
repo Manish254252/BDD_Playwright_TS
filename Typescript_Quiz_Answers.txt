@@ -1,0 +1,74 @@
+**TypeScript Quiz - Questions and Answers with Examples**
+
+1. **TypeScript is a library which is backed primarily by**  
+   **Answer:** B. Microsoft
+
+2. **TypeScript is used primarily with what backend language?**  
+   **Answer:** C. Node
+
+3. **TypeScript compiles down to**  
+   **Answer:** C. JavaScript
+
+4. **For inheritance, TypeScript supports**  
+   **Answer:** C. Extends  
+   **Example:**
+   ```typescript
+   class Animal {
+     move() {
+       console.log("Moving...");
+     }
+   }
+
+   class Dog extends Animal {
+     bark() {
+       console.log("Woof!");
+     }
+   }
+
+   const dog = new Dog();
+   dog.move(); // "Moving..."
+   dog.bark(); // "Woof!"
+   ```
+
+5. **Which one is an incorrect method to declare a variable?**  
+   **Answer:** C. let anyvar:any=[1,true,"name"];
+
+6. **Which one is correct method to declare a variable?**  
+   **Answer:** B. var x:number = 999;  
+   **Example:**
+   ```typescript
+   var x: number = 999;
+   console.log(x); // 999
+   ```
+
+7. **TypeScript file has the extension**  
+   **Answer:** B. .ts
+
+8. **Command for transpiling a .ts file is**  
+   **Answer:** A. tsc filename.ts  
+   **Example:**
+   ```bash
+   tsc app.ts
+   ```
+
+9. **Command for running transpiler in watch mode is**  
+   **Answer:** B. tsc filename -w  
+   **Example:**
+   ```bash
+   tsc app.ts -w
+   ```
+
+10. **For calling the constructor of parent, keyword used is**  
+    **Answer:** C. Super()  
+    **Example:**
+    ```typescript
+    class Parent {
+      constructor(public name: string) {}
+    }
+
+    class Child extends Parent {
+      constructor(name: string) {
+        super(name); // calling parent constructor
+      }
+    }
+    ```
