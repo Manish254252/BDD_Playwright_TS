@@ -1,0 +1,234 @@
+name: BDD Playwright Tests with Extent Reports
+
+on:
+  push: 
+    branches: [master, main, develop]
+  pull_request: 
+    branches: [master, main, develop]
+  workflow_dispatch:
+
+jobs: 
+  bdd-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+
+    steps:
+      # ---------- Checkout ----------
+      - name:  Checkout repository
+        uses: actions/checkout@v4
+
+      # ---------- Node Setup ----------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version:  18
+
+      # ---------- Cache Dependencies ----------
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # ---------- Install Dependencies ----------
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      # ---------- Run BDD Tests ----------
+      - name:  Run BDD Playwright tests
+        id: tests
+        run: npm test
+        continue-on-error: true
+
+      # ---------- Generate Extent Report ----------
+      - name: Generate Extent Report
+        if: always()
+        run: npm run report
+        continue-on-error: true
+
+      # ---------- Upload Artifacts ----------
+      - name: Upload Extent Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name:  extent-report-${{ github.run_number }}-${{ github.run_attempt }}
+          path: extentReport/
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ github.run_number }}-${{ github. run_attempt }}
+          path:  |
+            cucumber. json
+            test-results/
+          retention-days: 30
+          if-no-files-found:  ignore
+
+      - name: Upload Playwright Videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-videos-${{ github.run_number }}-${{ github.run_attempt }}
+          path: videos/
+          retention-days: 30
+          if-no-files-found: ignore
+
+      # ---------- Prepare GitHub Pages ----------
+      - name: Prepare GitHub Pages content
+        if: always()
+        run: |
+          mkdir -p gh-pages
+
+          # Copy Extent Report if it exists
+          if [ -d "extentReport" ]; then
+            cp -r extentReport/* gh-pages/
+          else
+            mkdir -p gh-pages
+          fi
+
+          # Create landing page
+          cat <<EOF > gh-pages/index. html
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>BDD Test Reports</title>
+            <style>
+              * { margin: 0; padding: 0; box-sizing: border-box; }
+              body { 
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+              }
+              .container {
+                background: white;
+                border-radius: 15px;
+                box-shadow:  0 20px 60px rgba(0,0,0,0.3);
+                padding: 50px;
+                max-width:  800px;
+                width:  100%;
+              }
+              header {
+                text-align: center;
+                margin-bottom: 40px;
+              }
+              h1 {
+                color: #333;
+                font-size:  2.5em;
+                margin-bottom: 10px;
+              }
+              .timestamp {
+                color: #666;
+                font-size: 14px;
+              }
+              . report-info {
+                background: #f8f9fa;
+                padding: 15px;
+                border-radius: 8px;
+                margin-bottom:  30px;
+              }
+              . report-info p {
+                color: #555;
+                margin:  8px 0;
+              }
+              .cards {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+              }
+              .card {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 30px;
+                border-radius:  10px;
+                text-decoration: none;
+                transition: transform 0.3s, box-shadow 0.3s;
+                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+              }
+              .card:hover {
+                transform: translateY(-8px);
+                box-shadow:  0 15px 30px rgba(102, 126, 234, 0.5);
+              }
+              .card h3 {
+                font-size: 1.3em;
+                margin-bottom:  10px;
+              }
+              . card p {
+                font-size: 0.95em;
+                opacity: 0.9;
+              }
+              footer {
+                text-align: center;
+                margin-top: 40px;
+                padding-top: 20px;
+                border-top:  1px solid #ddd;
+                color: #666;
+                font-size: 14px;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <header>
+                <h1>🧪 BDD Test Reports</h1>
+                <p class="timestamp">Generated on: $(date "+%Y-%m-%d %H:%M:%S")</p>
+              </header>
+
+              <div class="report-info">
+                <p><strong>Run Number:</strong> ${{ github.run_number }}</p>
+                <p><strong>Run Attempt:</strong> ${{ github. run_attempt }}</p>
+                <p><strong>Branch:</strong> ${{ github.ref }}</p>
+              </div>
+
+              <div class="cards">
+                <a href="spark.html" class="card">
+                  <h3>📊 Extent Report</h3>
+                  <p>Detailed BDD test execution results with logs</p>
+                </a>
+              </div>
+
+              <footer>
+                &copy; $(date "+%Y") BDD Playwright Tests - Automated by GitHub Actions
+              </footer>
+            </div>
+          </body>
+          </html>
+          EOF
+
+      # ---------- Deploy to GitHub Pages ----------
+      - name: Deploy Reports to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir:  gh-pages
+          user_name: github-actions[bot]
+          user_email:  github-actions[bot]@users.noreply.github.com
+
+      # ---------- Report Test Status ----------
+      - name: Report test status
+        if: always()
+        run: |
+          if [ "${{ steps.tests.outcome }}" == "failure" ]; then
+            echo "❌ BDD Tests FAILED"
+            exit 1
+          else
+            echo "✅ All BDD Tests PASSED"
+            exit 0
+          fi
